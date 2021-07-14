@@ -17,8 +17,8 @@ def rubberband(x, y, *points):
 
     # Use ConvexHull to find vertices of spectra that indicate convexity
     v = ConvexHull(np.array(list(zip(x, y))), incremental=True).vertices
+    
     # Roll vertices until they start from the lowest one
-
     v = np.roll(v, -v.argmin())
 
     # Leave only the ascending part
@@ -27,6 +27,7 @@ def rubberband(x, y, *points):
     # Optional points can be added to further drop the baseline
     if points:
         points = np.sort(np.reshape(points, (np.size(points), 1)))
+        #initialize array for storing the indexed points to add to the rubberband baseline
         pointarray = [0]
         
         for val in points:
@@ -34,6 +35,7 @@ def rubberband(x, y, *points):
             pointarray = np.append(pointarray, xIndex)
             
         pointarray = np.delete(pointarray, (0))
+        #initialize array of indexed spectral locations for rubberband baseline to drop
         insertLocs = [0]
 
         for val in pointarray:
@@ -44,7 +46,8 @@ def rubberband(x, y, *points):
                 insertLocs = np.append(insertLocs, vIndex+1)
 
         insertLocs = np.delete(insertLocs, (0))
-
+        
+        #adds additional points for linear interpolation
         for count, number in enumerate(pointarray):
             v = np.insert(v, insertLocs[count], number)
             
